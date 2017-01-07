@@ -8,175 +8,235 @@ SimpleCov.start
 
 class CSVExtractorTest < Minitest::Test
 
-  # def test_load
-  #   file_path = "./test/fixtures/high_school_graduation_enrollment_sample.csv"
-  #   csv = CSVExtractor.new(file_path)
-
-  #   assert_equal :location,   csv.headers[0]
-  #   assert_equal :timeframe,  csv.headers[1]
-  #   assert_equal :dataformat, csv.headers[2]
-  #   assert_equal :data,       csv.headers[3]
-  #   assert_equal "Colorado",  csv.contents[0][:location]
-  #   assert_equal "2010",      csv.contents[0][:timeframe]
-  #   assert_equal "Percent",   csv.contents[0][:dataformat]
-  #   assert_equal "0.724",     csv.contents[0][:data]
-  # end
-
-  # def test_district_list
-  #   file_path = "./test/fixtures/high_school_graduation_enrollment_sample.csv"
-  #   csv = CSVExtractor.new(file_path)
-  #   districts = ["Colorado", "ASHLEYVILLE", "GREGVILLE"]
-
-  #   assert_equal districts, csv.district_list
-  # end
-
-  # def test_data_hash
-  #   file_path = "./test/fixtures/high_school_graduation_enrollment_sample.csv"
-  #   csv = CSVExtractor.new(file_path)
-  #   data = {
-  #     "COLORADO" =>    {"2010"=>"0.724", "2011"=>"0.739", "2012"=>"0.75354", "2013"=>"0.769", "2014"=>"0.773"},
-  #     "ASHLEYVILLE" => {"2010"=>"0.895", "2011"=>"0.895", "2012"=>"0.88983", "2013"=>"0.91373", "2014"=>"0.898"},
-  #     "GREGVILLE" =>   {"2010"=>"0.57", "2011"=>"0.608", "2012"=>"0.63372", "2013"=>"0.59351", "2014"=>"0.659"}
-  #   }
-
-  #   assert_equal data, csv.data_hash
-  # end
-
-  # def test_read_file
-  #   extractor = CSVExtractor.new
-
-  #   file_path = "./test/fixtures/high_school_graduation_enrollment_sample.csv"
-  #   table = extractor.read_file(file_path)
-
-  #   binding.pry
-  #   assert_equal Table, table.class
-  #   assert_equal 15,    table.length
-  # end
-
-  # def test_specify_data_categories
-  #   extractor = CSVExtractor.new
-
-  #   file_path = "./test/fixtures/high_school_graduation_enrollment_sample.csv"
-  #   table = extractor.read_file(file_path)
-  #   extractor.specify_data_categories(table, :enrollment, :high_school_graduation)
-
-  # end
-
-  # def test_combine_all_tables
-  #   extractor = CSVExtractor.new
-  #   file_path_1 = "./test/fixtures/high_school_graduation_enrollment_sample.csv"
-  #   file_path_2 = "./test/fixtures/kindergarteners-enrollment-sample.csv"
-  #   table_1 = extractor.read_file(file_path_1)
-  #   table_2 = extractor.read_file(file_path_2)
-
-  #   extractor.specify_data_categories(table_1, :enrollment, :high_school_graduation)
-  #   extractor.specify_data_categories(table_2, :enrollment, :kindergarten)
-
-  #   extractor.combine_all_tables
-
-  # end
-
-  def test_convert_main_table_to_hash
-    extractor = CSVExtractor.new
-    file_path_1 = "./test/fixtures/high_school_graduation_enrollment_sample.csv"
-    file_path_2 = "./test/fixtures/kindergarteners-enrollment-sample.csv"
-    table_1 = extractor.read_file(file_path_1)
-    table_2 = extractor.read_file(file_path_2)
-
-    extractor.specify_data_categories(table_1, :enrollment, :high_school_graduation)
-    extractor.specify_data_categories(table_2, :enrollment, :kindergarten)
-
-    formatted_hash = extractor.convert_main_table_to_hash
+  def setup
+    CSVExtractor.new
   end
 
-  # def test_pair_dataset_name_with_data
-  #   extractor = CSVExtractor.new
-  #   dataset_name = high_school_graduation.keys.first
-  #   file_path = high_school_graduation.values.first
-  #   data_hash = extractor.insert_middle_hash_level(dataset_name, file_path)
-  # end
+  def test_create
+    extractor = setup
 
-  # def test_merge_siblings
-  #   extractor = CSVExtractor.new
-  #   data_hash = extractor.merge_siblings(hs_and_kindergarten)
-  # end
-
-  # def test_load_data_small
-  #   extractor = CSVExtractor.new
-  #   data_hash = extractor.load_data(small_enrollment)
-  # end
-
-  # def test_load_data_small_two_repos
-  #   extractor = CSVExtractor.new
-  #   data_hash = extractor.load_data(two_small_repositories)
-  # end
-
-  def high_school_graduation
-    {
-      :high_school_graduation => "./test/fixtures/high_school_graduation_enrollment_sample.csv"
-    }
-  end
-
-  def hs_and_kindergarten
-    {
-        :kindergarten => "./test/fixtures/kindergarteners-enrollment-sample.csv",
-        :high_school_graduation => "./test/fixtures/high_school_graduation_enrollment_sample.csv"
+    expected_data = {
+        :enrollment => {},
+        :statewide_testing => {},
+        :economic_profile => {}
       }
+
+    assert_equal expected_data, extractor.districts_hashes
   end
 
-  def small_enrollment
-    { :enrollment => {
-        :kindergarten => "./test/fixtures/kindergarteners-enrollment-sample.csv",
-        :high_school_graduation => "./test/fixtures/high_school_graduation_enrollment_sample.csv"
+  def test_extract_csv
+    extractor = setup
+
+    csv = extractor.extract_csv(generic_csv_file(1))
+
+    expected_headers = [:location, :timeframe, :dataformat, :data]
+
+    assert_equal CSV::Table,       csv.class
+    assert_equal expected_headers, csv.headers
+    assert_equal "gregville",      csv[0][:location]
+  end
+
+  def test_determine_headers
+    extractor = setup
+    csv_1 = extractor.extract_csv(generic_csv_file(1))
+    csv_2 = extractor.extract_csv(generic_csv_file(2))
+    csv_3 = extractor.extract_csv(generic_csv_file(3))
+
+    headers_1 = extractor.determine_headers(csv_1)
+    headers_2 = extractor.determine_headers(csv_2)
+    headers_3 = extractor.determine_headers(csv_3)
+
+    expected_headers_1 = [:location, :timeframe, :data]
+    expected_headers_2 = [:location, :subject, :timeframe, :data]
+    expected_headers_3 = [:location, :timeframe, :dataformat, :data]
+
+    assert_equal expected_headers_1, headers_1
+    assert_equal expected_headers_2, headers_2
+    assert_equal expected_headers_3, headers_3
+  end
+
+  def test_create_districts_hashes
+    extractor, csv = setup_with_generic_csv_file(1)
+
+    extractor.create_districts_hashes(:enrollment, csv)
+
+    expected_data = {
+        "GREGVILLE" => {:name=>"GREGVILLE"},
+        "ASHLEYVILLE" => {:name=>"ASHLEYVILLE"}
+      }
+
+    assert_equal expected_data, extractor.districts_hashes[:enrollment]
+  end
+
+  def test_extract_data_from_csv
+    extractor, csv = setup_with_generic_csv_file(2)
+
+    extractor.create_districts_hashes(:enrollment, csv)
+    extractor.merge_csv_data_into_districts_hashes(:enrollment, :generic_csv_data_2, csv)
+
+    expected_data = {
+      "GREGVILLE"=> {
+        :name=>"GREGVILLE",
+        :generic_csv_data_2=> {
+          "Math" => {2010=>0.11, 2011=>0.21, 2012=>0.31},
+          "Reading" => {2010=>0.115, 2011=>0.215, 2012=>0.315}
+        }
+      },
+      "ASHLEYVILLE"=> {
+        :name=>"ASHLEYVILLE",
+        :generic_csv_data_2=> {
+          "Math" => {2010=>0.41, 2011=>0.51, 2012=>0.61},
+          "Reading" => {2010=>0.415, 2011=>0.515, 2012=>0.615}
+        }
       }
     }
+
+    assert_equal expected_data, extractor.districts_hashes[:enrollment]
   end
 
-  def small_statewide_testing
-    { :statewide_testing => {
-        :third_grade => "./test/fixtures/third_grade_statewidetest_sample.csv",
+  def test_extract_data_from_multiple_csvs
+    extractor = setup
+    csv_1 = extractor.extract_csv(generic_csv_file(1))
+    csv_2 = extractor.extract_csv(generic_csv_file(2))
+
+    extractor.create_districts_hashes(:enrollment, csv_1)
+    extractor.create_districts_hashes(:enrollment, csv_2)
+    extractor.merge_csv_data_into_districts_hashes(:enrollment, :generic_csv_data_1, csv_1)
+    extractor.merge_csv_data_into_districts_hashes(:enrollment, :generic_csv_data_2, csv_2)
+
+    expected_data = {
+      "GREGVILLE"=> {
+        :name=>"GREGVILLE",
+        :generic_csv_data_1=> {2010=>0.1, 2011=>0.2, 2012=>0.3},
+        :generic_csv_data_2=> {
+          "Math" => {2010=>0.11, 2011=>0.21, 2012=>0.31},
+          "Reading" => {2010=>0.115, 2011=>0.215, 2012=>0.315}
+        }
+      },
+      "ASHLEYVILLE"=> {
+        :name=>"ASHLEYVILLE",
+        :generic_csv_data_1=> {
+          2010=>0.4, 2011=>0.5, 2012=>0.6
+        },
+        :generic_csv_data_2=> {
+          "Math" => {2010=>0.41, 2011=>0.51, 2012=>0.61},
+          "Reading" => {2010=>0.415, 2011=>0.515, 2012=>0.615}
+        }
       }
     }
+
+    assert_equal expected_data, extractor.districts_hashes[:enrollment]
   end
 
-  def two_small_repositories
-    { :enrollment => {
-        :kindergarten => "./test/fixtures/kindergarteners-enrollment-sample.csv",
-        :high_school_graduation => "./test/fixtures/high_school_graduation_enrollment_sample.csv"
+  def test_load_data
+    extractor = setup
+
+    extractor.load_data(small_data_set)
+
+    expected_data = {
+      :enrollment=> {
+        "COLORADO"=> {
+          :name=>"COLORADO",
+          :kindergarten => {2007=>0.395, 2006=>0.337, 2005=>0.278, 2004=>0.24, 2008=>0.536, 2009=>0.598, 2010=>0.64, 2011=>0.672, 2012=>0.695, 2013=>0.703, 2014=>0.741}
+        },
+        "GREGVILLE"=> {
+          :name=>"GREGVILLE",
+          :kindergarten => {2007=>0.392, 2006=>0.354, 2005=>0.267, 2004=>0.302, 2008=>0.385, 2009=>0.39, 2010=>0.436, 2011=>0.489, 2012=>0.479, 2013=>0.488, 2014=>0.49}
+        },
+        "TURINGTOWN"=> {
+          :name=>"TURINGTOWN",
+          :kindergarten => {2007=>0.306, 2006=>0.293, 2005=>0.3, 2004=>0.228, 2008=>0.673, 2009=>1.0, 2010=>1.0, 2011=>1.0, 2012=>1.0, 2013=>0.998, 2014=>1.0}
+        }
       },
       :statewide_testing => {
-        :third_grade => "./test/fixtures/third_grade_statewidetest_sample.csv",
-        :eighth_grade => "./test/fixtures/eighth_grade_statewidetest_sample.csv",
+        "COLORADO" => {
+          :name=>"COLORADO",
+          :third_grade => {
+            "Math" => {2008=>0.697, 2009=>0.691, 2010=>0.706, 2011=>0.696, 2012=>0.71, 2013=>0.723, 2014=>0.716},
+            "Reading" => {2008=>0.703, 2009=>0.726, 2010=>0.698, 2011=>0.728, 2012=>0.739, 2013=>0.733, 2014=>0.716},
+            "Writing" => {2008=>0.501, 2009=>0.536, 2010=>0.504, 2011=>0.513, 2012=>0.525, 2014=>0.511, 2013=>0.509}
+          }
+        },
+        "ASHLEYVILLE"=> {
+          :name=>"ASHLEYVILLE",
+          :third_grade => {
+            "Math" => {2008=>0.857, 2009=>0.824, 2010=>0.849, 2011=>0.819, 2012=>0.83, 2013=>0.855, 2014=>0.835},
+            "Reading" => {2008=>0.866, 2009=>0.862, 2010=>0.864, 2011=>0.867, 2012=>0.87, 2013=>0.859, 2014=>0.831},
+            "Writing" => {2008=>0.671, 2009=>0.706, 2010=>0.662, 2011=>0.678, 2012=>0.655, 2014=>0.639, 2013=>0.669}
+          }
+        },
+        "GREGVILLE" => {
+          :name=>"GREGVILLE",
+          :third_grade => {
+            "Math" => {2008=>0.56, 2009=>0.54, 2010=>0.469, 2011=>0.476, 2012=>0.39, 2013=>0.437, 2014=>0.512},
+            "Reading" => {2008=>0.523, 2009=>0.562, 2010=>0.457, 2011=>0.571, 2012=>0.54, 2013=>0.548, 2014=>0.477},
+            "Writing" => {2008=>0.426, 2009=>0.479, 2010=>0.312, 2011=>0.31, 2012=>0.288, 2014=>0.275, 2013=>0.284}
+          }
+        }
+      },
+      :economic_profile => {
+        "COLORADO" => {
+          :name=>"COLORADO",
+          :median_household_income=> {2005=>56222, 2006=>56456, 2008=>58244, 2007=>57685, 2009=>58433}
+        },
+        "ASHLEYVILLE" => {
+          :name=>"ASHLEYVILLE",
+          :median_household_income=> {2005=>85060, 2006=>85450, 2008=>89615, 2007=>88099, 2009=>89953}
+        },
+        "GREGVILLE" => {
+          :name=>"GREGVILLE",
+          :median_household_income=> {2005=>41382, 2006=>40740, 2008=>41886, 2007=>41430, 2009=>41088}
+        }
       }
     }
+
+    assert_equal expected_data, extractor.districts_hashes
   end
 
-  def small_economic_profile
-    { :economic_profile => {
+
+
+  def setup_with_generic_csv_file(n)
+    extractor = setup
+    [extractor, extractor.extract_csv(generic_csv_file(n))]
+  end
+
+  def small_data_set
+    {
+      :enrollment => {
+        :kindergarten => "./test/fixtures/kindergarteners_enrollment_sample.csv",
+      },
+      :statewide_testing => {
+        :third_grade => third_grade_sample
+      },
+      :economic_profile => {
         :median_household_income => "./test/fixtures/median_household_income_economicprofile_sample.csv",
       }
     }
   end
 
-  def all_csv_files
-    { :enrollment => {
-        :kindergarten => "./data/Kindergarteners-enrollment in full-day program.csv",
-        :high_school_graduation => "./data/High school graduation rates.csv"
+  def big_data_set
+    {
+      :enrollment => {
+        :kindergarten => "./test/fixtures/kindergarteners-enrollment-sample.csv",
+        :high_school_graduation => "./test/fixtures/high_school_graduation_enrollment_sample.csv",
       },
       :statewide_testing => {
-        :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
-        :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
-        :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
-        :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-        :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
+        :third_grade => third_grade_sample,
+        :eighth_grade => "./test/fixtures/eighth_grade_statewidetest_sample.csv",
       },
       :economic_profile => {
-        :median_household_income => "./data/Median household income.csv",
-        :children_in_poverty => "./data/School-aged children in poverty.csv",
-        :free_or_reduced_price_lunch => "./data/Students qualifying for free or reduced price lunch.csv",
-        :title_i => "./data/Title I students.csv"
+        :median_household_income => "./test/fixtures/median_household_income_economicprofile_sample.csv",
+        :title_1 => "./test/fixtures/title_1_economicprofile_sample.csv"
       }
     }
+  end
+
+  def third_grade_sample
+    "./test/fixtures/third_grade_statewidetest_sample.csv"
+  end
+
+  def generic_csv_file(n)
+    "./test/fixtures/csv_extractor_#{n}.csv"
   end
 
 end
