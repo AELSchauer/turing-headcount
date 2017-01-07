@@ -7,4 +7,12 @@ class Enrollment < Schema
     super(info_hash)
   end
 
+  def kindergarten_participation_by_year
+    @data[:kindergarten]
+  end
+
+  def kindergarten_participation_in_year(year)
+    kindergarten_participation_by_year[year]
+  end
+
 end

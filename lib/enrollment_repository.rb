@@ -10,8 +10,7 @@ class EnrollmentRepository < Repository
   end
 
   def load_data(load_hash)
-    # districts = district_list(load_hash)
-    data_hash = district_data_hash(:enrollment, load_hash)
+    data_hash = district_data_hash(load_hash, :enrollment)
     create_or_update_enrollments(data_hash)
   end
 

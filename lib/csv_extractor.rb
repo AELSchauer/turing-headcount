@@ -1,42 +1,43 @@
 require 'pry'
 require 'csv'
+require './lib/table'
 
 class CSVExtractor
 
-  attr_reader :contents,
-              :headers
+  attr_reader :table_list
 
-  def initialize(file_path, dataset_name=nil)
-    @dataset_name = dataset_name
-    read_file(file_path)
+  def initialize
+    @table_list = []
   end
 
   def read_file(file_path)
-    @contents = CSV.open(file_path, headers: true, header_converters: :symbol).read
-    @headers = @contents.headers
+    contents = CSV.open(file_path, headers: true, header_converters: :symbol).read
+    @table_list.push(Table.new)
+    table = @table_list.last
+    table.extract_csv_table(contents)
+    table
   end
 
-  def district_list
-    @contents[:location].map { |district| district.upcase }.uniq
+  def specify_data_categories(table, repository_type, dataset_name)
+    table.insert_column(1, :repository_type, repository_type)
+    table.insert_column(2, :dataset_name,    dataset_name)
   end
 
-  def data_hash
-    grouped = @contents.group_by { |row| row[:location] }
-    grouped.reduce({}) do |formatted, (district, rows)|
-      formatted.merge({district.upcase => year_data(rows)})
+  def combine_all_tables
+    main_table = @table_list[0]
+    tables = @table_list[1..-1]
+    tables.each do |table|
+      main_table.merge(table)
     end
+    @table_list = [main_table]
   end
 
-  def year_data(rows)
-    rows.reduce({}) { |year_data, row| year_data.merge({row[:timeframe] => row[:data]}) }
-  end
-
-  def add_data_to_hash(formatted_hash)
-    csv_data = data_hash
-    csv_data.each do |district_name, data|
-      formatted_hash[district_name][@dataset_name] = data
+  def convert_main_table_to_hash
+    if @table_list.length > 1
+      combine_all_tables
     end
-    formatted_hash
+    main_table = @table_list[0]
+    main_table.convert_to_hash
   end
 
 end

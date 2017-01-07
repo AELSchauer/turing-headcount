@@ -15,29 +15,29 @@ class DistrictRepositoryTest < Minitest::Test
     assert_equal Hash.new, dr.repo_links
   end
 
-  def test_load_data_small_single
-    dr = DistrictRepository.new
+  # def test_load_data_small_single
+  #   dr = DistrictRepository.new
 
-    dr.load_data(small_enrollment)
+  #   dr.load_data(small_enrollment)
 
-    assert_equal 3,             dr.data_links.length
-    assert_equal "COLORADO",    dr.data_links["COLORADO"].name
-    assert_equal "ASHLEYVILLE", dr.data_links["ASHLEYVILLE"].name
-    assert_equal "GREGVILLE",   dr.data_links["GREGVILLE"].name
-  end
+  #   assert_equal 3,             dr.data_links.length
+  #   assert_equal "COLORADO",    dr.data_links["COLORADO"].name
+  #   assert_equal "ASHLEYVILLE", dr.data_links["ASHLEYVILLE"].name
+  #   assert_equal "GREGVILLE",   dr.data_links["GREGVILLE"].name
+  # end
 
-  def test_load_data_small_multiple
-    dr = DistrictRepository.new
+  # def test_load_data_small_multiple
+  #   dr = DistrictRepository.new
 
-    dr.load_data(small_enrollment)
-    dr.load_data(small_statewide_testing)
-    dr.load_data(small_economic_profile)
+  #   dr.load_data(small_enrollment)
+  #   dr.load_data(small_statewide_testing)
+  #   dr.load_data(small_economic_profile)
 
-    assert_equal 3,             dr.data_links.length
-    assert_equal "COLORADO",    dr.data_links["COLORADO"].name
-    assert_equal "ASHLEYVILLE", dr.data_links["ASHLEYVILLE"].name
-    assert_equal "GREGVILLE",   dr.data_links["GREGVILLE"].name
-  end
+  #   assert_equal 3,             dr.data_links.length
+  #   assert_equal "COLORADO",    dr.data_links["COLORADO"].name
+  #   assert_equal "ASHLEYVILLE", dr.data_links["ASHLEYVILLE"].name
+  #   assert_equal "GREGVILLE",   dr.data_links["GREGVILLE"].name
+  # end
 
   def test_load_data_full
     dr = DistrictRepository.new

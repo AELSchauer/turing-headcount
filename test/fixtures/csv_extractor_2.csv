@@ -1,0 +1,13 @@
+Location,Subject,TimeFrame,DataFormat,Data
+GREGVILLE,Math,2010,Percent,0.110
+GREGVILLE,Math,2011,Percent,0.210
+GREGVILLE,Math,2012,Percent,0.310
+ASHLEYVILLE,Math,2010,Percent,0.410
+ASHLEYVILLE,Math,2011,Percent,0.510
+ASHLEYVILLE,Math,2012,Percent,0.610
+GREGVILLE,Reading,2010,Percent,0.115
+GREGVILLE,Reading,2011,Percent,0.215
+GREGVILLE,Reading,2012,Percent,0.315
+ASHLEYVILLE,Reading,2010,Percent,0.415
+ASHLEYVILLE,Reading,2011,Percent,0.515
+ASHLEYVILLE,Reading,2012,Percent,0.615
