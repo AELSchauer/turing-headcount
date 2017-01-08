@@ -1,7 +1,7 @@
-require './lib/schema'
 require 'pry'
+require './lib/data_scheme'
 
-class EconomicProfile < Schema
+class EconomicProfile < DataScheme
 
   def initialize(info_hash)
     super(info_hash)

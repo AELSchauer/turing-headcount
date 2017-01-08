@@ -1,14 +1,14 @@
-require './lib/schema'
 require 'pry'
+require './lib/data_scheme'
 
-class District < Schema
+class District < DataScheme
 
   def initialize(info_hash)
     super(info_hash)
   end
 
-  def create_connection(category, object)
-    @data[category] = object
+  def create_connection(repository_type, data_scheme_object)
+    @data.merge!({repository_type => data_scheme_object})
   end
 
   def enrollment
@@ -24,14 +24,3 @@ class District < Schema
   end
 
 end
-
-# This was the template I used to understand how inheritance works with classes and subclasses. Disregard this.
-# To better understand this, go to the "operations" project.
-# class District < Schema
-
-#   def output
-#     gate = Schema.new(@input_a, @input_b)
-#     gate.output
-#   end
-
-# end

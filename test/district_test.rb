@@ -1,13 +1,14 @@
-require './lib/district'
-require './lib/enrollment'
-require './lib/economic_profile'
-require './lib/statewide_test'
-
 require 'pry'
 require 'minitest/autorun'
 require 'minitest/pride'
 require 'simplecov'
 SimpleCov.start
+
+require './lib/district'
+require './lib/economic_profile'
+require './lib/enrollment'
+require './lib/statewide_test'
+require './test/test_helper'
 
 class DistrictTest <  Minitest::Test
 
@@ -73,48 +74,3 @@ class DistrictTest <  Minitest::Test
   end
 
 end
-
-# This was the template I used to understand how inheritance works with classes and subclasses. Disregard this.
-# To better understand this, go to the "operations" project.
-# class DistrictTest <  Minitest::Test
-
-#   def test_defaults
-#     gate = District.new
-
-#     assert_equal 0, gate.input_a
-#     assert_equal 0, gate.input_b
-#   end
-
-#   def test_0_0
-#     gate = District.new
-#     gate.input_a = 0
-#     gate.input_b = 0
-
-#     assert_equal 0, gate.output
-#   end
-
-#   def test_0_1
-#     gate = District.new
-#     gate.input_a = 0
-#     gate.input_b = 1
-
-#     assert_equal 0, gate.output
-#   end
-
-#   def test_1_0
-#     gate = District.new
-#     gate.input_a = 1
-#     gate.input_b = 0
-
-#     assert_equal 0, gate.output
-#   end
-
-#   def test_1_1
-#     gate = District.new
-#     gate.input_a = 1
-#     gate.input_b = 1
-
-#     assert_equal 1, gate.output
-#   end
-
-# end

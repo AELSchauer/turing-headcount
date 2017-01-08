@@ -1,11 +1,11 @@
-require './lib/schema'
-
 require 'pry'
 require 'minitest/autorun'
 require 'minitest/pride'
 require 'simplecov'
 SimpleCov.start
 
-class DataTest < Minitest::Test
+require './lib/data_scheme'
+
+class DataSchemeTest < Minitest::Test
 
 end

@@ -26,7 +26,7 @@ class IterationZeroTest < Minitest::Test
   end
 
   def test_enrollment_basics
-    e = Enrollment.new({:name => "ACADEMY 20", :kindergarten_participation => {2010 => 0.3915, 2011 => 0.35356, 2012 => 0.2677}})
+    e = Enrollment.new({:name => "ACADEMY 20", :kindergarten => {2010 => 0.3915, 2011 => 0.35356, 2012 => 0.2677}})
     all_years = {2010 => 0.3915, 2011 => 0.35356, 2012 => 0.2677}
     assert_in_delta 0.391, e.kindergarten_participation_in_year(2010), 0.005
     assert_in_delta 0.267, e.kindergarten_participation_in_year(2012), 0.005

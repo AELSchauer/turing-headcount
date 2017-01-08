@@ -100,4 +100,9 @@ class CSVExtractor
     csv_table[:dataformat].uniq.length > 1 ? true : false
   end
 
+  def get_district_list
+    districts_list = @districts_hashes.map { |key, value| @districts_hashes[key].keys }.flatten.uniq.sort
+    districts_list.map { |district_name| {:name => district_name} }
+  end
+
 end
