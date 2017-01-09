@@ -37,7 +37,7 @@ class CSVFiles
     }
   end
 
-  def all_csv_files
+  def self.all_csv_files
     { :enrollment => {
         :kindergarten => "./data/Kindergartners in full-day program.csv",
         :high_school_graduation => "./data/High school graduation rates.csv"
@@ -54,6 +54,22 @@ class CSVFiles
         :children_in_poverty => "./data/School-aged children in poverty.csv",
         :free_or_reduced_price_lunch => "./data/Students qualifying for free or reduced price lunch.csv",
         :title_i => "./data/Title I students.csv"
+      }
+    }
+  end
+
+  def self.a_few_csv_files
+    { :enrollment => {
+        :kindergarten => "./data/Kindergartners in full-day program.csv",
+        :high_school_graduation => "./data/High school graduation rates.csv"
+      },
+      :statewide_testing => {
+        :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
+        :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
+      },
+      :economic_profile => {
+        :median_household_income => "./data/Median household income.csv",
+        :children_in_poverty => "./data/School-aged children in poverty.csv",
       }
     }
   end

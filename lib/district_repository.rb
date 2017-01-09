@@ -19,14 +19,17 @@ class DistrictRepository < Repository
   end
 
   def load_data(load_hash)
-    district_list = get_district_list(load_hash)
+    extractor = load_hash_extractor(load_hash)
+    district_list = extractor.get_district_list
     create_districts(district_list)
     load_repositories(load_hash)
     link_data_scheme_objects_to_districts
   end
 
-  def get_district_list(load_hash)
-    load_hash_extractor(load_hash).get_district_list
+  def get_district_list(include_state_name)
+    district_list = data_scheme_links.keys
+    district_list.delete(@state_name) unless include_state_name[:include_state]
+    district_list
   end
 
   def create_districts(district_list)

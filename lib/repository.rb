@@ -1,4 +1,5 @@
 require 'pry'
+require './lib/csv_extractor'
 
 class Repository
 
@@ -10,6 +11,7 @@ class Repository
     @data_scheme_links = {}
     @repository_type = nil
     @data_class = nil
+    @state_name = "COLORADO"
   end
 
   def load_data(load_hash)

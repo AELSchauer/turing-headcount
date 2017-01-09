@@ -16,4 +16,8 @@ class DataScheme
     nil
   end
 
+  def [](data_key)
+    @data[data_key]
+  end
+
 end
