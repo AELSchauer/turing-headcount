@@ -13,7 +13,7 @@ class DistrictRepository < Repository
     super
     @repository_links = {
         :enrollment => EnrollmentRepository.new,
-        :statewide_testing => StatewideTestRepository.new,
+        :statewide_test => StatewideTestRepository.new,
         :economic_profile => EconomicProfileRepository.new,
       }
   end

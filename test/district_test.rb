@@ -1,14 +1,8 @@
-require 'pry'
-require 'minitest/autorun'
-require 'minitest/pride'
-require 'simplecov'
-SimpleCov.start
-
+require './test/test_helper'
 require './lib/district'
 require './lib/economic_profile'
 require './lib/enrollment'
 require './lib/statewide_test'
-require './test/test_helper'
 
 class DistrictTest <  Minitest::Test
 

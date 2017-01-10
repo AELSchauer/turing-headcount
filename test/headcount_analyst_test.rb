@@ -1,12 +1,6 @@
-require 'pry'
-require 'minitest/autorun'
-require 'minitest/pride'
-require 'simplecov'
-SimpleCov.start
-
+require './test/test_helper'
 require './lib/headcount_analyst'
 require './lib/district_repository'
-require './test/test_helper'
 
 class HeadcountAnalystTest < Minitest::Test
 

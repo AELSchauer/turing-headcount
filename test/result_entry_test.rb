@@ -1,10 +1,5 @@
-require 'pry'
-require 'minitest/autorun'
-require 'minitest/pride'
-require 'simplecov'
-SimpleCov.start
-
-require './lib/entry_test'
+require './test/test_helper'
+require './lib/result_entry'
 
 class ResultEntryTest < Minitest::Test
 end

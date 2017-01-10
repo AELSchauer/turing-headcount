@@ -6,7 +6,7 @@ class StatewideTestRepository < Repository
 
   def initialize
     super
-    @repository_type = :statewide_testing
+    @repository_type = :statewide_test
     @data_class = StatewideTest
   end
 

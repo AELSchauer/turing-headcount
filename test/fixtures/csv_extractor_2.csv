@@ -1,4 +1,4 @@
-Location,Subject,TimeFrame,DataFormat,Data
+Location,Score,TimeFrame,DataFormat,Data
 GREGVILLE,Math,2010,Percent,0.110
 GREGVILLE,Math,2011,Percent,0.210
 GREGVILLE,Math,2012,Percent,0.310

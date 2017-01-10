@@ -1,5 +1,6 @@
 require "minitest"
 require "minitest/autorun"
+require "minitest/pride"
 require_relative "../../lib/district_repository"
 require_relative "../../lib/district"
 require_relative "../../lib/enrollment"

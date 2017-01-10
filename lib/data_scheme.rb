@@ -1,6 +1,8 @@
 require 'pry'
+require './lib/exceptions'
 
 class DataScheme
+  include Exceptions
 
   attr_reader   :name,
                 :data

@@ -1,10 +1,12 @@
 require "minitest"
 require "minitest/autorun"
+require "minitest/pride"
 require_relative "../../lib/district_repository"
 require_relative "../../lib/district"
 require_relative "../../lib/enrollment"
 require_relative "../../lib/headcount_analyst"
 require_relative "../../lib/statewide_test"
+require_relative "../../lib/exceptions"
 
 class IterationThreeTest < Minitest::Test
   def test_statewide_testing_repository_basics
@@ -109,19 +111,19 @@ class IterationThreeTest < Minitest::Test
     str = statewide_repo
     testing = str.find_by_name("AULT-HIGHLAND RE-9")
 
-    assert_raises(UnknownDataError) do
+    assert_raises(Exceptions::UnknownDataError) do
       testing.proficient_by_grade(1)
     end
 
-    assert_raises(UnknownDataError) do
+    assert_raises(Exceptions::UnknownDataError) do
       testing.proficient_for_subject_by_grade_in_year(:pizza, 8, 2011)
     end
 
-    assert_raises(UnknownDataError) do
+    assert_raises(Exceptions::UnknownRaceError) do
       testing.proficient_for_subject_by_race_in_year(:reading, :pizza, 2013)
     end
 
-    assert_raises(UnknownDataError) do
+    assert_raises(Exceptions::UnknownDataError) do
       testing.proficient_for_subject_by_race_in_year(:pizza, :white, 2013)
     end
   end
@@ -129,49 +131,48 @@ class IterationThreeTest < Minitest::Test
   def test_statewide_testing_relationships
     dr = district_repo
     district = dr.find_by_name("ACADEMY 20")
+
     statewide_test = district.statewide_test
-    assert statewide_test.is_a?(StatewideTest)
+    dataset_names = [:third_grade, :eighth_grade, :math, :reading, :writing]
 
-    ha = HeadcountAnalyst.new(dr)
-
-    assert_equal "WILEY RE-13 JT", ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :math).first
-    assert_in_delta 0.3, ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :math).last, 0.005
-
-    assert_equal "COTOPAXI RE-3", ha.top_statewide_test_year_over_year_growth(grade: 8, subject: :reading).first
-    assert_in_delta 0.13, ha.top_statewide_test_year_over_year_growth(grade: 8, subject: :reading).last, 0.005
-
-    assert_equal "BETHUNE R-5", ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :writing).first
-    assert_in_delta 0.148, ha.top_statewide_test_year_over_year_growth(grade: 3, subject: :writing).last, 0.005
+    assert_equal StatewideTest, statewide_test.class
+    assert_equal dataset_names, statewide_test.data.keys
+    assert_equal false,         statewide_test[dataset_names[0]].nil?
+    assert_equal false,         statewide_test[dataset_names[1]].nil?
+    assert_equal false,         statewide_test[dataset_names[2]].nil?
+    assert_equal false,         statewide_test[dataset_names[3]].nil?
+    assert_equal false,         statewide_test[dataset_names[4]].nil?
   end
 
   def statewide_repo
     str = StatewideTestRepository.new
     str.load_data({
-                    :statewide_testing => {
-                      :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
-                      :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
-                      :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
-                      :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-                      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
-                    }
-                  })
+      :statewide_test => {
+        :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
+        :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
+        :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
+        :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
+        :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
+      }
+    })
     str
   end
 
   def district_repo
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {
-                    :kindergarten => "./data/Kindergartners in full-day program.csv",
-                    :high_school_graduation => "./data/High school graduation rates.csv",
-                   },
-                   :statewide_testing => {
-                     :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
-                     :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
-                     :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
-                     :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-                     :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
-                   }
-                 })
+    dr.load_data({
+      :enrollment => {
+        :kindergarten => "./data/Kindergartners in full-day program.csv",
+        :high_school_graduation => "./data/High school graduation rates.csv",
+      },
+      :statewide_test => {
+        :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
+        :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
+        :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
+        :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
+        :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
+      }
+    })
     dr
   end
 end

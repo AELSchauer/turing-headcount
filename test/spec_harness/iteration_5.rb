@@ -1,5 +1,6 @@
 require "minitest"
 require "minitest/autorun"
+require "minitest/pride"
 require_relative "../../lib/district_repository"
 require_relative "../../lib/district"
 require_relative "../../lib/enrollment"
@@ -43,7 +44,7 @@ class IterationFiveTest < Minitest::Test
                     :kindergarten => "./data/Kindergartners in full-day program.csv",
                     :high_school_graduation => "./data/High school graduation rates.csv",
                    },
-                   :statewide_testing => {
+                   :statewide_test => {
                      :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
                      :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
                      :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",

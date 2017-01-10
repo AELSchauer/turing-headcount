@@ -1,18 +1,8 @@
-require "./lib/csv_extractor"
-require "./lib/data_scheme"
-require "./lib/district"
-require "./lib/district_repository"
-require "./lib/economic_profile"
-require "./lib/economic_profile_repository"
-require "./lib/enrollment"
-require "./lib/enrollment_repository"
-require "./lib/headcount_analyst"
-require "./lib/repository"
-require "./lib/result_entry"
-require "./lib/result_set"
-require "./lib/statewide_test"
-require "./lib/statewide_test_repository"
-
+require 'pry'
+require 'minitest/autorun'
+require 'minitest/pride'
+require 'simplecov'
+SimpleCov.start
 
 class CSVFiles
 
@@ -24,7 +14,7 @@ class CSVFiles
   end
 
   def small_statewide_testing
-    { :statewide_testing => {
+    { :statewide_test => {
         :third_grade => CSVFiles.third_grade_sample,
       }
     }
@@ -42,7 +32,7 @@ class CSVFiles
         :kindergarten => "./data/Kindergartners in full-day program.csv",
         :high_school_graduation => "./data/High school graduation rates.csv"
       },
-      :statewide_testing => {
+      :statewide_test => {
         :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
         :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
         :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
@@ -63,7 +53,7 @@ class CSVFiles
         :kindergarten => "./data/Kindergartners in full-day program.csv",
         :high_school_graduation => "./data/High school graduation rates.csv"
       },
-      :statewide_testing => {
+      :statewide_test => {
         :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
         :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
       },
@@ -79,7 +69,7 @@ class CSVFiles
       :enrollment => {
         :kindergarten => "./test/fixtures/kindergarteners_enrollment_sample.csv",
       },
-      :statewide_testing => {
+      :statewide_test => {
         :third_grade => CSVFiles.third_grade_sample
       },
       :economic_profile => {
@@ -94,7 +84,7 @@ class CSVFiles
         :kindergarten => "./test/fixtures/kindergarteners_enrollment_sample.csv",
         :high_school_graduation => "./test/fixtures/high_school_graduation_enrollment_sample.csv",
       },
-      :statewide_testing => {
+      :statewide_test => {
         :third_grade => CSVFiles.third_grade_sample,
         :eighth_grade => "./test/fixtures/eighth_grade_statewidetest_sample.csv",
       },

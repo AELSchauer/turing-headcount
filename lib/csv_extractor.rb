@@ -7,7 +7,7 @@ class CSVExtractor
   def initialize
     @districts_hashes = {
         :enrollment => {},
-        :statewide_testing => {},
+        :statewide_test => {},
         :economic_profile => {}
       }
   end
@@ -35,58 +35,83 @@ class CSVExtractor
   end
 
   def merge_csv_data_into_districts_hashes(repository_type, dataset_name, csv_table)
+    data_hash = extract_data_from_csv(csv_table)
     csv_table[:location].uniq.each do |district_name|
       district_name = district_name.upcase
-      data_hash = extract_data_from_csv(csv_table, district_name)
       full_hash = {district_name => {dataset_name => data_hash[district_name]}}
       @districts_hashes[repository_type][district_name].merge!(full_hash[district_name])
     end
   end
 
-  def extract_data_from_csv(csv_table, district_name)
+  def extract_data_from_csv(csv_table)
     headers = determine_headers(csv_table)
-    turn_csv_to_nested_hash(headers, csv_table, district_name)
+    turn_csv_to_nested_hash(headers, csv_table, 0)
   end
 
-  def turn_csv_to_nested_hash(headers, row_list, element)
-    if headers.length > 2
-      child_row_list = get_child_row_list(row_list, headers[0], element)
-      element_list = get_element_list(child_row_list, headers[1])
-      child_hash = element_list.reduce({}) do |child_hash, child_element|
-        child_hash.merge(turn_csv_to_nested_hash(headers[1..-1], child_row_list, child_element))
+  def turn_csv_to_nested_hash(headers, row_list, n)
+    if n < headers.length-2
+      index_n_list = row_list.map { |row| format_information(row, headers[n]) }.uniq.sort
+      index_n_list.reduce({}) do |index_n_hash, index_n_object|
+        index_n_row_list = row_list.find_all { |row| format_information(row, headers[n]) == index_n_object }
+        index_n_hash.merge!({index_n_object => turn_csv_to_nested_hash(headers, index_n_row_list, n+1)})
       end
-      {element => child_hash}
     else
-      return_hash_top(row_list, headers)
+      return_hash_top(row_list, headers, n)
     end
   end
 
-  def get_child_row_list(row_list, header, element)
-    row_list.find_all { |row| row[header].upcase == element.upcase}
-  end
-
-  def get_element_list(row_list, header)
-    row_list.map { |row| row[header] }
-  end
-
-  def return_hash_top(row_list, headers)
+  def return_hash_top(row_list, headers, n)
     row_list.reduce({}) do |child_hash, row|
-      key = format_information(row, headers[0])
-      value = format_information(row, headers[1])
+      key = format_information(row, headers[n])
+      value = format_information(row, headers[n+1])
       child_hash.merge({key => value})
     end
   end
 
   def format_information(csv_row, element_type)
-    if element_type == :timeframe
+    case element_type
+    when :location
+      csv_row[element_type].upcase
+    when :timeframe
       csv_row[element_type].to_i
-    elsif element_type == :data
+    when :data
       case csv_row[:dataformat]
       when "Percent"
         csv_row[element_type].to_f.round(3)
       when "Number", "Currency"
         csv_row[element_type].to_i
       end
+    when :dataformat
+      case csv_row[:dataformat]
+      when "Percent"
+        :percentage
+      when "Number"
+        :total
+      end
+    when :score
+      csv_row[element_type].downcase.to_sym
+    when :category, :race_ethnicity
+      case csv_row[element_type]
+      when "Asian", "Asian Students"
+        :asian
+      when "Black", "Black Students"
+        :black
+      when "Hawaiian/Pacific Islander", "Native Hawaiian or Other Pacific Islander"
+        :pacific_islander
+      when "Hispanic", "Hispanic Students"
+        :hispanic
+      when "Native American", "Native American Students"
+        :native_american
+      when "Two or more", "Two or More Races"
+        :two_or_more
+      when "White", "White Students"
+        :white
+      else
+        csv_row[element_type].gsub(" ","_").downcase.to_sym
+      end
+    else
+      # poverty level = ???
+      csv_row[element_type]
     end
   end
 

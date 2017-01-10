@@ -1,5 +1,6 @@
 require "minitest"
 require "minitest/autorun"
+require "minitest/pride"
 require_relative "../../lib/district_repository"
 require_relative "../../lib/headcount_analyst"
 require_relative "../../lib/economic_profile_repository"
@@ -7,11 +8,13 @@ require_relative "../../lib/economic_profile"
 
 class IterationFourTest < Minitest::Test
   def test_economic_profile_basics
-    data = {:median_household_income => {[2014, 2015] => 50000, [2013, 2014] => 60000},
-            :children_in_poverty => {2012 => 0.1845},
-            :free_or_reduced_price_lunch => {2014 => {:percentage => 0.023, :total => 100}},
-            :title_i => {2015 => 0.543},
-           }
+    data = {
+      :median_household_income => {[2014, 2015] => 50000, [2013, 2016] => 60000},
+      :children_in_poverty => {2012 => 0.184},
+      :free_or_reduced_price_lunch => {2014 => {:percentage => 0.023, :total => 100}},
+      :title_i => {2015 => 0.543},
+      :name => "ACADEMY 20"
+    }
     ep = EconomicProfile.new(data)
     assert_equal 50000, ep.median_household_income_in_year(2015)
     assert_equal 55000, ep.median_household_income_average
@@ -24,13 +27,13 @@ class IterationFourTest < Minitest::Test
   def test_loading_econ_profile_data
     epr = EconomicProfileRepository.new
     epr.load_data({
-                    :economic_profile => {
-                      :median_household_income => "./data/Median household income.csv",
-                      :children_in_poverty => "./data/School-aged children in poverty.csv",
-                      :free_or_reduced_price_lunch => "./data/Students qualifying for free or reduced price lunch.csv",
-                      :title_i => "./data/Title I students.csv"
-                    }
-                  })
+      :economic_profile => {
+        :median_household_income => "./data/Median household income.csv",
+        :children_in_poverty => "./data/School-aged children in poverty.csv",
+        :free_or_reduced_price_lunch => "./data/Students qualifying for free or reduced price lunch.csv",
+        :title_i => "./data/Title I students.csv"
+      }
+    })
     ["ACADEMY 20","WIDEFIELD 3","ROARING FORK RE-1","MOFFAT 2","ST VRAIN VALLEY RE 1J"].each do |dname|
       assert epr.find_by_name(dname).is_a?(EconomicProfile)
     end
@@ -38,18 +41,19 @@ class IterationFourTest < Minitest::Test
 
   def district_repo
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {
-                    :kindergarten => "./data/Kindergartners in full-day program.csv",
-                    :high_school_graduation => "./data/High school graduation rates.csv",
-                   },
-                   :statewide_testing => {
-                     :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
-                     :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
-                     :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
-                     :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-                     :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
-                   }
-                 })
+    dr.load_data({
+      :enrollment => {
+        :kindergarten => "./data/Kindergartners in full-day program.csv",
+        :high_school_graduation => "./data/High school graduation rates.csv",
+      },
+      :statewide_test => {
+        :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
+        :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
+        :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
+        :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
+        :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
+      }
+      })
     dr
   end
 end

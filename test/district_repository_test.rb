@@ -1,11 +1,5 @@
-require 'pry'
-require 'minitest/autorun'
-require 'minitest/pride'
-require 'simplecov'
-SimpleCov.start
-
-require './lib/district_repository'
 require './test/test_helper'
+require './lib/district_repository'
 
 class DistrictRepositoryTest < Minitest::Test
 
@@ -14,7 +8,7 @@ class DistrictRepositoryTest < Minitest::Test
 
     assert_equal Hash.new,                  dr.data_scheme_links
     assert_equal EnrollmentRepository,      dr.repository_links[:enrollment].class
-    assert_equal StatewideTestRepository,   dr.repository_links[:statewide_testing].class
+    assert_equal StatewideTestRepository,   dr.repository_links[:statewide_test].class
     assert_equal EconomicProfileRepository, dr.repository_links[:economic_profile].class
   end
 
