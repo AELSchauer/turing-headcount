@@ -12,10 +12,22 @@ class DistrictRepository < Repository
   def initialize
     super
     @repository_links = {
-        :enrollment => EnrollmentRepository.new,
-        :statewide_test => StatewideTestRepository.new,
-        :economic_profile => EconomicProfileRepository.new,
-      }
+      :enrollment => EnrollmentRepository.new,
+      :statewide_test => StatewideTestRepository.new,
+      :economic_profile => EconomicProfileRepository.new,
+    }
+  end
+
+  def enrollment_repository
+    @repository_links[:enrollment]
+  end
+
+  def statewide_test_repository
+    @repository_links[:statewide_test]
+  end
+
+  def economic_profile_repository
+    @repository_links[:economic_profile]
   end
 
   def load_data(load_hash)

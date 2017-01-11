@@ -3,8 +3,7 @@ require './lib/csv_extractor'
 
 class Repository
 
-  attr_reader :data_scheme_links,
-              :repository_type,
+  attr_reader :repository_type,
               :data_class
 
   def initialize
@@ -39,6 +38,16 @@ class Repository
   def find_all_matching(district_name_snippet)
     n = district_name_snippet.length-1
     @data_scheme_links.keys.find_all { |district_name| district_name[0..n] == district_name_snippet }
+  end
+
+  def data_scheme_links(include_state_name={include_state: true})
+    if include_state_name[:include_state]
+      @data_scheme_links
+    else
+      links = @data_scheme_links.dup
+      links.delete(@state_name)
+      links
+    end
   end
 
 end

@@ -131,6 +131,13 @@ class CSVExtractorTest < Minitest::Test
     assert_equal expected_list, district_list
   end
 
+  def test_third_grade_load_data
+    extractor = setup_all_csv_files
+    binding.pry
+
+
+  end
+
   def setup
     CSVExtractor.new
   end
@@ -143,6 +150,12 @@ class CSVExtractorTest < Minitest::Test
   def setup_big_data_set
     extractor = setup
     extractor.load_data(CSVFiles.big_data_set)
+    extractor
+  end
+
+  def setup_all_csv_files
+    extractor = setup
+    extractor.load_data(CSVFiles.all_csv_files)
     extractor
   end
 
